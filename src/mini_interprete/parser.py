@@ -32,7 +32,17 @@ class Parser:
         if not self.tokens:
             raise ErrorDeSintaxis("entrada vacía", 0)
         
-        return self._expresion()
+        arbol = self._expresion()
+
+        actual = self._actual()
+        if actual is not None:
+           raise ErrorDeSintaxis(
+                f"token inesperado {actual.valor!r}",
+                actual.posicion
+           )
+
+        return arbol
+
 
     def _actual(self):
         """El token en la posicion actual, o None si ya no quedan."""
@@ -42,9 +52,23 @@ class Parser:
 
     def _avanzar(self):
         """Consume el token actual y lo regresa."""
-        token = self.tokens[self.pos]
+        token = self._actual()
+
+        if token is None:
+            if self.tokens:
+                ultimo = self.tokens[-1]
+                posicion = ultimo.posicion + len(str(ultimo.valor))
+            else:
+                posicion = 0
+
+            raise ErrorDeSintaxis(
+                "fin inesperado de la expresion",
+                posicion
+            )
+
         self.pos += 1
         return token
+
 
     def _expresion(self):
         izquierda = self._termino()
