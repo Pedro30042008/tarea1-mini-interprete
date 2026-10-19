@@ -38,3 +38,13 @@ def test_rechaza_numeros_sin_operador():
 
     assert error.value.posicion == 2
 
+def test_rechaza_parentesis_sin_cerrar():
+    """
+    Verifica que se reporte un error de sintaxis
+    cuando falta el parentesis de cierre.
+    """
+    with pytest.raises(ErrorDeSintaxis) as error:
+        interpretar("(1 + 2")
+
+    assert error.value.posicion == 6
+
