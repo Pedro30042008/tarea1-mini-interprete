@@ -7,7 +7,13 @@ from mini_interprete.tokens import Token, TipoToken
 def test_tokeniza_un_numero_solo():
     assert tokenizar("42") == [Token(TipoToken.NUMERO, 42, 0)]
 
+# Pruebas Agregadas:
 
+# Caso Normal:
+
+def test_tokenizar_numeros_con_ceros_a_la_izquierda():
+    assert tokenizar("00001") == [Token(TipoToken.NUMERO, 1, 0)]
+    
 def test_tokeniza_una_suma():
     assert tokenizar("3+4") == [
         Token(TipoToken.NUMERO, 3, 0),
