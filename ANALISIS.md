@@ -1,15 +1,17 @@
 # Análisis — Tarea 1
 
 **Integrantes:**
-1.
-2.
-3.
+1. Alan Gael Alvarez Hernández
+2. María Fernanda Miranda Sánchez
+3. Pedro Pablo Ruiz Hernández
 
 **Fork:**
+
+https://github.com/Pedro30042008/tarea1-mini-interprete.git
+
 **Rama:**
 
-> Contesten en este archivo. Respuestas breves y concretas: se califica que
-> hayan entendido, no la extensión.
+feature/pedro-ruiz
 
 ---
 
@@ -20,8 +22,8 @@
 | Componente | Qué recibe | Qué entrega | De qué es responsable |
 |---|---|---|---|
 | `lexer` | | | |
-| `parser` | | | |
-| `ast` | | | |
+| `parser` | Lista de Tokens | Nodo raíz del AST | Construir la estructura del AST a partir de la lista de Tokens recibida, respetando la precedencia de las operaciones y verificando las reglas de sintaxis planteadas. |
+| `ast` | Un valor numérico o un operador definido junto con dos Nodos | Un Nodo `Numero` que contiene un valor numérico o un Nodo `OperacionBinaria` que contiene un operador, un Nodo Izquierdo y un Nodo Derecho. | Definir la estructura de los nodos `Numero` y `OperacionBinaria` que se encuentran dentro del AST. |
 | `evaluator` | | | |
 
 ### 1.2 ¿Qué recorrido sigue una expresión desde que se recibe como texto hasta que produce un resultado?
@@ -32,13 +34,20 @@
 |---|---|
 | texto | `"(3 + 4) * 2"` |
 | tokens | |
-| AST | |
+| AST | `OperacionBinaria("*", OperacionBinaria("+", Numero(3), Numero(4)), Numero(2))` |
 | resultado | |
 
-> Para el renglón del AST, dibújenlo **primero ustedes** y después comprueben
-> con `python3 interprete.py --arbol "(3 + 4) * 2"`. Si su dibujo y el del
-> programa no coinciden, uno de los dos está mal, y averiguar cuál es
-> justamente el trabajo.
+**AST**
+
+```text
+*
+├── +
+│   ├── 3
+│   └── 4
+└── 2
+```
+
+> El dibujo del AST de la expresión `(3 + 4) * 2` hecho por el equipo coincide con el del programa.
 
 ---
 
