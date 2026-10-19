@@ -46,9 +46,23 @@ class Parser:
 
     def _avanzar(self):
         """Consume el token actual y lo regresa."""
-        token = self.tokens[self.pos]
+        token = self._actual()
+
+        if token is None:
+            if self.tokens:
+                ultimo = self.tokens[-1]
+                posicion = ultimo.posicion + len(str(ultimo.valor))
+            else:
+                posicion = 0
+
+            raise ErrorDeSintaxis(
+                "fin inesperado de la expresion",
+                posicion
+            )
+
         self.pos += 1
         return token
+
 
     def _expresion(self):
         izquierda = self._termino()
