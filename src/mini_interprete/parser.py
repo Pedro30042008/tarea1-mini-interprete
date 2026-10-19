@@ -27,6 +27,11 @@ class Parser:
 
     def parsear(self):
         """Construye el AST de la lista de tokens."""
+
+        # No acepta expreesiones vacías.
+        if not self.tokens:
+            raise ErrorDeSintaxis("entrada vacía", 0)
+        
         return self._expresion()
 
     def _actual(self):
