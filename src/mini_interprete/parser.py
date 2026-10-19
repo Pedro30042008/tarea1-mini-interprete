@@ -27,6 +27,11 @@ class Parser:
 
     def parsear(self):
         """Construye el AST de la lista de tokens."""
+
+        # No acepta expreesiones vacías.
+        if not self.tokens:
+            raise ErrorDeSintaxis("entrada vacía", 0)
+        
         arbol = self._expresion()
 
         actual = self._actual()
@@ -37,6 +42,7 @@ class Parser:
            )
 
         return arbol
+
 
     def _actual(self):
         """El token en la posicion actual, o None si ya no quedan."""

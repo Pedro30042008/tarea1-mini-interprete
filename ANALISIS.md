@@ -1,15 +1,17 @@
 # Análisis — Tarea 1
 
 **Integrantes:**
-1.
-2.
-3.
+1. Alan Gael Alvarez Hernández
+2. María Fernanda Miranda Sánchez
+3. Pedro Pablo Ruiz Hernández
 
 **Fork:**
+
+https://github.com/Pedro30042008/tarea1-mini-interprete.git
+
 **Rama:**
 
-> Contesten en este archivo. Respuestas breves y concretas: se califica que
-> hayan entendido, no la extensión.
+feature/pedro-ruiz
 
 ---
 
@@ -20,8 +22,8 @@
 | Componente | Qué recibe | Qué entrega | De qué es responsable |
 |---|---|---|---|
 | `lexer` | | | |
-| `parser` | | | |
-| `ast` | | | |
+| `parser` | Lista de Tokens | Nodo raíz del AST | Construir la estructura del AST a partir de la lista de Tokens recibida, respetando la precedencia de las operaciones y verificando las reglas de sintaxis planteadas. |
+| `ast` | Un valor numérico o un operador definido junto con dos Nodos | Un Nodo `Numero` que contiene un valor numérico o un Nodo `OperacionBinaria` que contiene un operador, un Nodo Izquierdo y un Nodo Derecho. | Definir la estructura de los nodos `Numero` y `OperacionBinaria` que se encuentran dentro del AST. |
 | `evaluator` | | | |
 
 ### 1.2 ¿Qué recorrido sigue una expresión desde que se recibe como texto hasta que produce un resultado?
@@ -32,13 +34,20 @@
 |---|---|
 | texto | `"(3 + 4) * 2"` |
 | tokens | |
-| AST | |
+| AST | `OperacionBinaria("*", OperacionBinaria("+", Numero(3), Numero(4)), Numero(2))` |
 | resultado | |
 
-> Para el renglón del AST, dibújenlo **primero ustedes** y después comprueben
-> con `python3 interprete.py --arbol "(3 + 4) * 2"`. Si su dibujo y el del
-> programa no coinciden, uno de los dos está mal, y averiguar cuál es
-> justamente el trabajo.
+**AST**
+
+```text
+*
+├── +
+│   ├── 3
+│   └── 4
+└── 2
+```
+
+> El dibujo del AST de la expresión `(3 + 4) * 2` hecho por el equipo coincide con el del programa.
 
 ---
 
@@ -48,7 +57,9 @@
 
 | Prueba | Componente | Comportamiento que verifica | ¿Cuántos operadores usa? | ¿Normal, frontera o inválida? |
 |---|---|---|---|---|
-| | | | | |
+| `test_construye_el_arbol_de_una_suma()` | parser | Verifica que parser construya el AST correcto para la suma de dos numeros `"3 + 4"` | 1 | Normal |
+| `test_la_multiplicacion_se_agrupa_antes_que_la_suma()` | parser | Verifica que parser construya el AST correcto dado que la multiplicación tiene mayor prioridad en la expresión `"3 + 4 * 2"` | 2 | Normal |
+| `test_los_parentesis_cambian_la_agrupacion()` | parser | Verifica que parser construya el AST correcto dado que los paréntesis tiene mayor prioridad en la expresión `"(3 + 4) * 2"` | 2 | Normal |
 
 > Llenen la tabla **completa**, con las 13. Es tediosa a propósito: la única
 > forma de saber qué no está cubierto es caracterizar sistemáticamente lo que
@@ -59,6 +70,20 @@
 
 > Ésta es la pregunta importante de toda la tarea. Tómense su tiempo.
 
+- La precedencia de operadores en expresiones que incluyan en conjunto los operadores de suma, resta, multiplicación y división.
+
+- La asociatividad de operadores del mismo nivel de precedencia, especialmente cuando aparecen varias restas o divisiones consecutivas.
+
+- Agregar 0's antes de un número es válido; por ejemplo `007` es `7`.
+
+- El comportamiento ante entradas inválidas, como números decimales en la entrada, operadores mal colocados, expresiones incompletas, cadena vacía o caracteres desconocidos.
+
+- El comportamiento de expresiones cuando utilizan múltiples paréntesis, incluyendo agrupaciones anidadas y paréntesis sin cerrar.	
+
+- La división entre cero debe reportarse como `ErrorDeEvaluacion`.
+
+- El comportamiento de la división cuando el resultado no es un número entero.
+
 ---
 
 ## 3. Las pruebas que agregaron
@@ -67,7 +92,10 @@
 
 | Prueba (archivo::nombre) | Entrada | Esperado | Categoría | ¿Por qué esa categoría? |
 |---|---|---|---|---|
-| | | | | |
+| `test_lexer.py :: test_tokenizar_numeros_con_ceros_a_la_izquierda()` | `00001` | `[Token(TipoToken.NUMERO, 1, 0)]` | Normal | Verifica que los ceros adicionales a la izquierda no modifiquen el valor del número entero. |
+| `test_parser.py :: test_los_negativos_unarios_son_invalidos()` | `-1` | `ErrorDeSintaxis` | Frontera | Comprueba que el parser rechace el uso del menos unario, al encontrarse fuera de las expresiones numéricas permitidas por la gramática. |
+| `test_parser.py :: test_los_numeros_inician_en_cero()` | `0` | `Numero(0)` | Frontera | Comprueba que el parser acepte el cero como el menor número entero sin signo permitido por el intérprete. |
+| `test_parser.py :: test_expresion_vacia()` | `""` | `ErrorDeSintaxis` | Frontera | Comprueba el comportamiento del parser para que rechace una entrada de cero caracteres, por debajo de la longitud mínima necesaria para construir una expresión válida. |
 
 ---
 
@@ -84,7 +112,7 @@
 
 | Defecto | Entrada que lo revela | Daba | Debería dar | Commit rojo | Commit verde |
 |---|---|---|---|---|---|
-| | | | | | |
+| Parser no procesa bien el caso de entrada con cero caracteres. | `""` | `IndexError` | `ErrorDeSintaxis` | df9f157 | d4483a5 |
 
 ### 4.4 ¿Cómo saben que la corrección es general y no sólo hace pasar ese ejemplo?
 
