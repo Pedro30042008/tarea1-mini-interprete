@@ -57,7 +57,9 @@ feature/pedro-ruiz
 
 | Prueba | Componente | Comportamiento que verifica | ¿Cuántos operadores usa? | ¿Normal, frontera o inválida? |
 |---|---|---|---|---|
-| | | | | |
+| `test_construye_el_arbol_de_una_suma()` | parser | Verifica que parser construya el AST correcto para la suma de dos numeros `"3 + 4"` | 1 | Normal |
+| `test_la_multiplicacion_se_agrupa_antes_que_la_suma()` | parser | Verifica que parser construya el AST correcto dado que la multiplicación tiene mayor prioridad en la expresión `"3 + 4 * 2"` | 2 | Normal |
+| `test_los_parentesis_cambian_la_agrupacion()` | parser | Verifica que parser construya el AST correcto dado que los paréntesis tiene mayor prioridad en la expresión `"(3 + 4) * 2"` | 2 | Normal |
 
 > Llenen la tabla **completa**, con las 13. Es tediosa a propósito: la única
 > forma de saber qué no está cubierto es caracterizar sistemáticamente lo que
@@ -67,6 +69,20 @@ feature/pedro-ruiz
 ### 2.2 ¿Qué comportamientos **no** estaban probados?
 
 > Ésta es la pregunta importante de toda la tarea. Tómense su tiempo.
+
+- La precedencia de operadores en expresiones que incluyan en conjunto los operadores de suma, resta, multiplicación y división.
+
+- La asociatividad de operadores del mismo nivel de precedencia, especialmente cuando aparecen varias restas o divisiones consecutivas.
+
+- Agregar 0's antes de un número es válido; por ejemplo `007` es `7`.
+
+- El comportamiento ante entradas inválidas, como números decimales en la entrada, operadores mal colocados, expresiones incompletas, cadena vacía o caracteres desconocidos.
+
+- El comportamiento de expresiones cuando utilizan múltiples paréntesis, incluyendo agrupaciones anidadas y paréntesis sin cerrar.	
+
+- La división entre cero debe reportarse como `ErrorDeEvaluacion`.
+
+- El comportamiento de la división cuando el resultado no es un número entero.
 
 ---
 
