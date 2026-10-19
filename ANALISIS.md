@@ -92,7 +92,10 @@ feature/pedro-ruiz
 
 | Prueba (archivo::nombre) | Entrada | Esperado | Categoría | ¿Por qué esa categoría? |
 |---|---|---|---|---|
-| | | | | |
+| `test_lexer.py :: test_tokenizar_numeros_con_ceros_a_la_izquierda()` | `00001` | `[Token(TipoToken.NUMERO, 1, 0)]` | Normal | Verifica que los ceros adicionales a la izquierda no modifiquen el valor del número entero. |
+| `test_parser.py :: test_los_negativos_unarios_son_invalidos()` | `-1` | `ErrorDeSintaxis` | Frontera | Comprueba que el parser rechace el uso del menos unario, al encontrarse fuera de las expresiones numéricas permitidas por la gramática. |
+| `test_parser.py :: test_los_numeros_inician_en_cero()` | `0` | `Numero(0)` | Frontera | Comprueba que el parser acepte el cero como el menor número entero sin signo permitido por el intérprete. |
+| `test_parser.py :: test_expresion_vacia()` | `""` | `ErrorDeSintaxis` | Frontera | Comprueba el comportamiento del parser para que rechace una entrada de cero caracteres, por debajo de la longitud mínima necesaria para construir una expresión válida. |
 
 ---
 
@@ -109,7 +112,7 @@ feature/pedro-ruiz
 
 | Defecto | Entrada que lo revela | Daba | Debería dar | Commit rojo | Commit verde |
 |---|---|---|---|---|---|
-| | | | | | |
+| Parser no procesa bien el caso de entrada con cero caracteres. | `""` | `IndexError` | `ErrorDeSintaxis` | df9f157 | d4483a5 |
 
 ### 4.4 ¿Cómo saben que la corrección es general y no sólo hace pasar ese ejemplo?
 
