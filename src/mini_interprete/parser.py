@@ -69,7 +69,9 @@ class Parser:
         self.pos += 1
         return token
 
-
+    # Antes, la recursion agrupaba las operaciones por la derecha.
+    # Se reemplazo por un while que acumula los nodos por la izquierda,
+    # respetando la asociatividad de los operadores de igual precedencia.
     def _expresion(self):
         izquierda = self._termino()
         while True:
@@ -85,24 +87,27 @@ class Parser:
             )
         return izquierda
 
+    # Antes, la recursion agrupaba multiplicaciones y divisiones por la derecha.
+    # Se reemplazo por un while que procesa cada factor y acumula el AST
+    # por la izquierda, respetando la asociatividad de los operadores.
     def _termino(self):
         izquierda = self._factor()
-    
+
         while True:
             actual = self._actual()
-    
+
             if actual is None or actual.tipo not in OPERADORES_PRODUCTO:
                 break
-    
+
             operador = self._avanzar()
             derecha = self._factor()
-    
+
             izquierda = OperacionBinaria(
                 operador.valor,
                 izquierda,
                 derecha
             )
-    
+
         return izquierda
 
     def _factor(self):
