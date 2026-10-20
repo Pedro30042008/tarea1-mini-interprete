@@ -16,7 +16,7 @@
 > dar cuenta de lo que entregaron.
 
 ---
-
+ 
 ## 0. ¿Se usó IA en esta actividad?
 
 - [ ] **No.** Firmen la última sección y terminen. Con eso queda completa.
