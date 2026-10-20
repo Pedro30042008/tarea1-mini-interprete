@@ -1,5 +1,6 @@
 """Pruebas del evaluador: del AST a un numero."""
-
+import pytest
+from mini_interprete.errores import ErrorDeSintaxis
 from mini_interprete.cli import interpretar
 
 
@@ -25,3 +26,25 @@ def test_precedencia_sin_parentesis():
 
 def test_precedencia_con_parentesis():
     assert interpretar("(3 + 4) * 2") == 14
+
+
+def test_rechaza_numeros_sin_operador():
+    """
+    Verifica que se rechacen dos numeros consecutivos
+    sin un operador entre ellos.
+    """
+    with pytest.raises(ErrorDeSintaxis) as error:
+        interpretar("2 3")
+
+    assert error.value.posicion == 2
+
+def test_rechaza_parentesis_sin_cerrar():
+    """
+    Verifica que se reporte un error de sintaxis
+    cuando falta el parentesis de cierre.
+    """
+    with pytest.raises(ErrorDeSintaxis) as error:
+        interpretar("(1 + 2")
+
+    assert error.value.posicion == 6
+

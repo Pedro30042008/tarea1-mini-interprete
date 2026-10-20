@@ -27,7 +27,22 @@ class Parser:
 
     def parsear(self):
         """Construye el AST de la lista de tokens."""
-        return self._expresion()
+
+        # No acepta expreesiones vacías.
+        if not self.tokens:
+            raise ErrorDeSintaxis("entrada vacía", 0)
+        
+        arbol = self._expresion()
+
+        actual = self._actual()
+        if actual is not None:
+           raise ErrorDeSintaxis(
+                f"token inesperado {actual.valor!r}",
+                actual.posicion
+           )
+
+        return arbol
+
 
     def _actual(self):
         """El token en la posicion actual, o None si ya no quedan."""
@@ -37,26 +52,62 @@ class Parser:
 
     def _avanzar(self):
         """Consume el token actual y lo regresa."""
-        token = self.tokens[self.pos]
+        token = self._actual()
+
+        if token is None:
+            if self.tokens:
+                ultimo = self.tokens[-1]
+                posicion = ultimo.posicion + len(str(ultimo.valor))
+            else:
+                posicion = 0
+
+            raise ErrorDeSintaxis(
+                "fin inesperado de la expresion",
+                posicion
+            )
+
         self.pos += 1
         return token
 
+    # Antes, la recursion agrupaba las operaciones por la derecha.
+    # Se reemplazo por un while que acumula los nodos por la izquierda,
+    # respetando la asociatividad de los operadores de igual precedencia.
     def _expresion(self):
         izquierda = self._termino()
-        actual = self._actual()
-        if actual is not None and actual.tipo in OPERADORES_SUMA:
-            operador = self._avanzar()
-            derecha = self._expresion()
-            return OperacionBinaria(operador.valor, izquierda, derecha)
-        return izquierda
-
-    def _termino(self):
-        izquierda = self._factor()
-        actual = self._actual()
-        if actual is not None and actual.tipo in OPERADORES_PRODUCTO:
+        while True:
+            actual = self._actual()
+            if actual is None or actual.tipo not in OPERADORES_SUMA:
+                break
             operador = self._avanzar()
             derecha = self._termino()
-            return OperacionBinaria(operador.valor, izquierda, derecha)
+            izquierda = OperacionBinaria(
+                operador.valor,
+                izquierda,
+                derecha
+            )
+        return izquierda
+
+    # Antes, la recursion agrupaba multiplicaciones y divisiones por la derecha.
+    # Se reemplazo por un while que procesa cada factor y acumula el AST
+    # por la izquierda, respetando la asociatividad de los operadores.
+    def _termino(self):
+        izquierda = self._factor()
+
+        while True:
+            actual = self._actual()
+
+            if actual is None or actual.tipo not in OPERADORES_PRODUCTO:
+                break
+
+            operador = self._avanzar()
+            derecha = self._factor()
+
+            izquierda = OperacionBinaria(
+                operador.valor,
+                izquierda,
+                derecha
+            )
+
         return izquierda
 
     def _factor(self):

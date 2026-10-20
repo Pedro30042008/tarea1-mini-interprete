@@ -1,9 +1,11 @@
 """Pruebas del parser: de los tokens al AST."""
+import pytest
 
 from mini_interprete.ast import Numero, OperacionBinaria
 from mini_interprete.lexer import tokenizar
 from mini_interprete.parser import Parser
 
+from mini_interprete.errores import ErrorDeSintaxis
 
 def arbol_de(texto):
     return Parser(tokenizar(texto)).parsear()
@@ -25,3 +27,48 @@ def test_los_parentesis_cambian_la_agrupacion():
     assert arbol_de("(3 + 4) * 2") == OperacionBinaria(
         "*", OperacionBinaria("+", Numero(3), Numero(4)), Numero(2)
     )
+    
+# Pruebas Agregadas:
+
+# Caso Frontera:
+
+def test_los_negativos_unarios_son_invalidos():
+    # -1 debe considerarse como ErrorDeSintaxis
+    with pytest.raises(ErrorDeSintaxis):
+        arbol_de("-1")
+
+# Caso Frontera:
+
+def test_los_numeros_inician_en_cero():
+    # 0 es el primer número válido.
+    assert arbol_de("0") == Numero(0)
+
+# Caso Frontera:
+
+def test_expresion_vacia():
+    # La expresión vacía "" no estructura nada, se reporta como ErrorDeSintaxis.
+    with pytest.raises(ErrorDeSintaxis):
+        arbol_de("")
+
+def test_resta_encadenada_asociativa_izquierda():
+    resultado = arbol_de("10 - 3 - 2")
+
+    esperado = OperacionBinaria(
+        "-",
+        OperacionBinaria("-", Numero(10), Numero(3)),
+        Numero(2)
+    )
+
+    assert resultado == esperado
+
+
+def test_division_encadenada_asociativa_izquierda():
+    resultado = arbol_de("24 / 4 / 2")
+
+    esperado = OperacionBinaria(
+        "/",
+        OperacionBinaria("/", Numero(24), Numero(4)),
+        Numero(2)
+    )
+
+    assert resultado == esperado

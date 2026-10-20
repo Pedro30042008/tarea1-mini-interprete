@@ -4,6 +4,7 @@
 """
 
 from .tokens import Token, TipoToken
+from .errores import ErrorDeSintaxis
 
 SIMBOLOS = {
     "+": TipoToken.MAS,
@@ -26,16 +27,33 @@ def tokenizar(texto: str) -> list:
             i += 1
 
         elif caracter.isdigit():
-            inicio = i
-            while i < len(texto) and texto[i].isdigit():
-                i += 1
-            tokens.append(Token(TipoToken.NUMERO, int(texto[inicio:i]), inicio))
+            # Delega la lectura del numero y actualiza la posicion de recorrido.
+            token, i = _leer_numero(texto, i)
+            tokens.append(token)
 
         elif caracter in SIMBOLOS:
             tokens.append(Token(SIMBOLOS[caracter], caracter, i))
             i += 1
 
         else:
-            i += 1
+            raise ErrorDeSintaxis(
+                f"caracter desconocido {caracter!r}",
+                i
+            )
 
     return tokens
+
+# Reconoce un numero completo y devuelve su token y la posicion donde termina.
+def _leer_numero(texto: str, inicio: int):
+    i = inicio
+
+    while i < len(texto) and texto[i].isdigit():
+        i += 1
+
+    token = Token(
+        TipoToken.NUMERO,
+        int(texto[inicio:i]),
+        inicio
+    )
+
+    return token, i
