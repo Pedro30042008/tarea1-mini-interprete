@@ -49,3 +49,26 @@ def test_expresion_vacia():
     # La expresión vacía "" no estructura nada, se reporta como ErrorDeSintaxis.
     with pytest.raises(ErrorDeSintaxis):
         arbol_de("")
+
+def test_resta_encadenada_asociativa_izquierda():
+    resultado = arbol_de("10 - 3 - 2")
+
+    esperado = OperacionBinaria(
+        "-",
+        OperacionBinaria("-", Numero(10), Numero(3)),
+        Numero(2)
+    )
+
+    assert resultado == esperado
+
+
+def test_division_encadenada_asociativa_izquierda():
+    resultado = arbol_de("24 / 4 / 2")
+
+    esperado = OperacionBinaria(
+        "/",
+        OperacionBinaria("/", Numero(24), Numero(4)),
+        Numero(2)
+    )
+
+    assert resultado == esperado
