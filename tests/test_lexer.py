@@ -1,7 +1,9 @@
 """Pruebas del lexer: del texto a los tokens."""
 
+import pytest
 from mini_interprete.lexer import tokenizar
 from mini_interprete.tokens import Token, TipoToken
+from mini_interprete.errores import ErrorDeSintaxis
 
 
 def test_tokeniza_un_numero_solo():
@@ -55,3 +57,11 @@ def test_tokeniza_expresion_con_parentesis_y_operadores():
         Token(TipoToken.MAS, "+", 13),
         Token(TipoToken.NUMERO, 2, 15)
     ]
+
+def test_rechaza_caracteres_desconocidos():
+    resultado = "3 @ + 4"
+
+    with pytest.raises(ErrorDeSintaxis) as error:
+        tokenizar(resultado)
+
+    assert error.value.posicion == 2
